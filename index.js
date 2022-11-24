@@ -46,6 +46,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         const usersCollection = client.db('greenTechIt').collection('users')
+        const categoriesCollection = client.db('greenTechIt').collection('categories')
 
 
         // token 
@@ -96,7 +97,35 @@ async function run() {
           }) */
 
 
-        console.log('database connected')
+
+
+        // user post
+
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.send(result);
+        })
+
+
+        // get users
+
+        app.get('/users', async (req, res) => {
+            const query = {}
+            const result = await usersCollection.find(query).toArray();
+            res.send(result);
+        })
+
+
+        // get categories
+
+        app.get('/categories', async (req, res) => {
+            const query = {}
+            const result = await categoriesCollection.find(query).toArray();
+            res.send(result);
+        })
+
+
     }
     finally {
 
