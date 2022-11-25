@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const { query } = require('express');
 
 const port = process.env.PORT || 5000;
 
@@ -47,6 +48,8 @@ async function run() {
     try {
         const usersCollection = client.db('greenTechIt').collection('users')
         const categoriesCollection = client.db('greenTechIt').collection('categories')
+        const productsCollection = client.db('greenTechIt').collection('products')
+        const bookingsCollection = client.db('greenTechIt').collection('bookings')
 
 
         // token 
@@ -122,6 +125,44 @@ async function run() {
         app.get('/categories', async (req, res) => {
             const query = {}
             const result = await categoriesCollection.find(query).toArray();
+            res.send(result);
+        })
+
+
+        // get all products
+
+        app.get('/products', async (req, res) => {
+            const query = {}
+            const result = await productsCollection.find(query).toArray();
+            res.send(result)
+        })
+
+
+        // get specific products
+
+        app.get('/products/:category', async (req, res) => {
+            const category = req.params.category;
+            const query = { category: category }
+            const result = await productsCollection.find(query).toArray();
+            res.send(result);
+        })
+
+
+        // single product
+
+        app.get('/product/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productsCollection.findOne(query);
+            res.send(result);
+        })
+
+
+        // booking post 
+
+        app.post('/bookings', async (req, res) => {
+            const booking = req.body;
+            const result = await bookingsCollection.insertOne(booking);
             res.send(result);
         })
 
