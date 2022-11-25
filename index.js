@@ -166,6 +166,14 @@ async function run() {
             res.send(result);
         })
 
+        // post product
+
+        app.post('/add-a-product', async (req, res) => {
+            const product = req.body;
+            const result = await productsCollection.insertOne(product);
+            res.send(result);
+        })
+
 
     }
     finally {
