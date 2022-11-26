@@ -50,6 +50,7 @@ async function run() {
         const categoriesCollection = client.db('greenTechIt').collection('categories')
         const productsCollection = client.db('greenTechIt').collection('products')
         const bookingsCollection = client.db('greenTechIt').collection('bookings')
+        const blogsCollection = client.db('greenTechIt').collection('blogs')
 
 
         // token 
@@ -202,6 +203,33 @@ async function run() {
             const filter = { email }
             const result = await bookingsCollection.find(filter).sort({ _id: -1 }).toArray();
             res.send(result)
+        })
+
+
+        // get blogs
+
+        app.get('/blogs', async (req, res) => {
+            const query = {}
+            const result = await blogsCollection.find(query).toArray();
+            res.send(result);
+        })
+
+        // single blogs
+
+        app.get('/blogs/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const result = await blogsCollection.findOne(filter);
+            res.send(result);
+        })
+
+
+        // get blogs section
+
+        app.get('/home-blogs', async (req, res) => {
+            const query = {}
+            const result = await blogsCollection.find(query).limit(3).toArray();
+            res.send(result);
         })
 
 
