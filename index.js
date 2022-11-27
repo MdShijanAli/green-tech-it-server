@@ -51,6 +51,7 @@ async function run() {
         const productsCollection = client.db('greenTechIt').collection('products')
         const bookingsCollection = client.db('greenTechIt').collection('bookings')
         const blogsCollection = client.db('greenTechIt').collection('blogs')
+        const advertiseCollection = client.db('greenTechIt').collection('advertise')
 
 
         // token 
@@ -167,6 +168,13 @@ async function run() {
             res.send(result);
         })
 
+        // get bookings
+        app.get('/bookings', async (req, res) => {
+            const query = {}
+            const result = await bookingsCollection.find(query).toArray();
+            res.send(result);
+        })
+
         // post product
 
         app.post('/add-a-product', async (req, res) => {
@@ -229,6 +237,24 @@ async function run() {
         app.get('/home-blogs', async (req, res) => {
             const query = {}
             const result = await blogsCollection.find(query).limit(3).toArray();
+            res.send(result);
+        })
+
+
+        // advertise post 
+
+        app.post('/advertise', async (req, res) => {
+            const advertise = req.body;
+            const result = await advertiseCollection.insertOne(advertise);
+            res.send(result);
+        })
+
+
+        // get advertise post
+
+        app.get('/advertise', async (req, res) => {
+            const query = {}
+            const result = await advertiseCollection.find(query).limit(3).toArray();
             res.send(result);
         })
 
