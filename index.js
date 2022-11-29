@@ -14,13 +14,14 @@ app.use(cors());
 app.use(express.json());
 
 
-// greenTechDB
-// 9souNskkVTiLv1L8
+// 
+// 
 
 
 
 
-const uri = "mongodb+srv://greenTechDB:9souNskkVTiLv1L8@cluster0.jqheb6c.mongodb.net/?retryWrites=true&w=majority";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}8@cluster0.jqheb6c.mongodb.net/?retryWrites=true&w=majority`;
+
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 
