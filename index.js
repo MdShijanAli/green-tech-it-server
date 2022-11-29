@@ -198,7 +198,7 @@ async function run() {
         app.get('/my-products/:email', async (req, res) => {
             const email = req.params.email;
             const filter = { email }
-            const result = await productsCollection.find(filter).toArray();
+            const result = await productsCollection.find(filter).sort({ _id: -1 }).toArray();
             res.send(result)
         })
 
@@ -263,10 +263,66 @@ async function run() {
 
         app.get('/advertise', async (req, res) => {
             const query = {}
-            const result = await advertiseCollection.find(query).limit(3).toArray();
+            const result = await advertiseCollection.find(query).limit(3).sort({ _id: -1 }).toArray();
             res.send(result);
         })
 
+
+        /*    // temorary update data
+   
+           app.get('/update', async (req, res) => {
+               const filter = {};
+               const options = { upsert: true };
+               const updatedDoc = {
+                   $set: {
+                       condition: 'Good',
+                       parchesDate: '2022',
+                       description: 'HP Spectre x360 16 2-in-1 Laptop - 16t-f100 Windows 11 HomeIntel® Cor…'
+                   }
+               }
+               const result = await productsCollection.updateMany(filter, updatedDoc, options);
+               res.send(result);
+           }) */
+
+
+        // payment methoed
+
+
+        app.post('/create-payment', async (req, res) => {
+            const booking = req.body;
+            const price = booking.price;
+            const amount = price * 100;
+
+            const paymentIntent = await stripe.paymentIntents.create({
+                currency: 'BDT',
+                amount: amount,
+                "payment_method_types": [
+                    "card"
+                ],
+            });
+            res.send({
+                clientSecret: paymentIntent.client_secret,
+            });
+        })
+
+
+
+        app.post('/payments', async (req, res) => {
+            const payment = req.body;
+            const result = await paymentsCollection.insertOne(payment);
+
+            const id = payment.bookingId;
+            const filter = { _id: ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                    paid: true,
+                    transaction: payment.transactionId
+                }
+            }
+            const updatedResult = await bookingCollection.updateOne(filter, updatedDoc)
+
+            res.send(result);
+        })
 
 
     }
