@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
-const { query } = require('express');
+
 
 const port = process.env.PORT || 5000;
 
@@ -20,10 +20,9 @@ app.use(express.json());
 
 
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}8@cluster0.jqheb6c.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.jqheb6c.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-
 
 
 /* function verifyJWT(req, res, next) {
@@ -70,7 +69,7 @@ async function run() {
             console.log(result)
 
             const token = jwt.sign(user, process.env.ACCESS_TOKEN, {
-                expiresIn: '1d'
+                expiresIn: '7d'
             })
             console.log(token)
             res.send({ result, token })
@@ -269,61 +268,30 @@ async function run() {
         })
 
 
-        /*    // temorary update data
-   
-           app.get('/update', async (req, res) => {
-               const filter = {};
-               const options = { upsert: true };
-               const updatedDoc = {
-                   $set: {
-                       condition: 'Good',
-                       parchesDate: '2022',
-                       description: 'HP Spectre x360 16 2-in-1 Laptop - 16t-f100 Windows 11 HomeIntel® Cor…'
-                   }
-               }
-               const result = await productsCollection.updateMany(filter, updatedDoc, options);
-               res.send(result);
-           }) */
+        // temorary update data
+
+        /*  app.get('/update', async (req, res) => {
+             const filter = {};
+             const options = { upsert: true };
+             const updatedDoc = {
+                 $set: {
+                     condition: 'Good',
+                     parchesDate: '27 MAY, 2022',
+                     description: 'HP Spectre x360 16 2-in-1 Laptop - 16t-f100 Windows 11 HomeIntel® Cor…'
+                 }
+             }
+             const result = await productsCollection.updateMany(filter, updatedDoc, options);
+             res.send(result);
+         }) */
 
 
         // payment methoed
 
 
-        app.post('/create-payment', async (req, res) => {
-            const booking = req.body;
-            const price = booking.price;
-            const amount = price * 100;
-
-            const paymentIntent = await stripe.paymentIntents.create({
-                currency: 'BDT',
-                amount: amount,
-                "payment_method_types": [
-                    "card"
-                ],
-            });
-            res.send({
-                clientSecret: paymentIntent.client_secret,
-            });
-        })
 
 
 
-        app.post('/payments', async (req, res) => {
-            const payment = req.body;
-            const result = await paymentsCollection.insertOne(payment);
 
-            const id = payment.bookingId;
-            const filter = { _id: ObjectId(id) };
-            const updatedDoc = {
-                $set: {
-                    paid: true,
-                    transaction: payment.transactionId
-                }
-            }
-            const updatedResult = await bookingCollection.updateOne(filter, updatedDoc)
-
-            res.send(result);
-        })
 
 
     }
