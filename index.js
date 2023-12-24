@@ -1,17 +1,20 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
-const jwt = require('jsonwebtoken');
-
-
-const port = process.env.PORT || 5000;
-
 const app = express();
+const port = process.env.PORT || 5000;
+require('dotenv').config();
+
+
+
 
 // middleware
 app.use(cors());
 app.use(express.json());
+
+
+
+
 
 
 
@@ -30,27 +33,6 @@ async function run() {
         const blogsCollection = client.db('greenTechIt').collection('blogs')
         const advertiseCollection = client.db('greenTechIt').collection('advertise')
 
-
-        // token 
-
-        app.put('/user/:email', async (req, res) => {
-            const email = req.params.email;
-            const user = req.body;
-            const filter = { email: email };
-            const options = { upsert: true }
-            const updateDoc = {
-                $set: user,
-            }
-            const result = await usersCollection.updateOne(filter, updateDoc, options);
-
-            console.log(result)
-
-            const token = jwt.sign(user, process.env.ACCESS_TOKEN, {
-                expiresIn: '7d'
-            })
-            console.log(token)
-            res.send({ result, token })
-        })
 
 
 
@@ -215,7 +197,7 @@ async function run() {
 
         app.get('/advertise', async (req, res) => {
             const query = {}
-            const result = await advertiseCollection.find(query).limit(3).sort({ _id: -1 }).toArray();
+            const result = await advertiseCollection.find(query).sort({ _id: -1 }).toArray();
             res.send(result);
         })
 
