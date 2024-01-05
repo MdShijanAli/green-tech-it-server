@@ -55,6 +55,33 @@ async function run() {
             res.send(result);
         })
 
+
+        // User Post api for google signin
+
+app.post('/api/users', async (req, res) => {
+    const email = req.body.email;
+    const query = { email: email };
+
+    try {
+        const existingUser = await usersCollection.findOne(query);
+
+        if (existingUser) {
+            // User already exists, respond with an appropriate message
+            res.send({ message: 'User with this email already exists' });
+        } else {
+            // User doesn't exist, create a new user
+            const result = await usersCollection.insertOne({
+                ...req.body
+            });
+            res.send(result);
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
         // delete single users
 
         app.delete('/user/:id', async (req, res) => {
@@ -202,21 +229,6 @@ async function run() {
         })
 
 
-        // temorary update data
-
-        /*  app.get('/update', async (req, res) => {
-             const filter = {};
-             const options = { upsert: true };
-             const updatedDoc = {
-                 $set: {
-                     condition: 'Good',
-                     parchesDate: '27 MAY, 2022',
-                     description: 'HP Spectre x360 16 2-in-1 Laptop - 16t-f100 Windows 11 HomeIntel® Cor…'
-                 }
-             }
-             const result = await productsCollection.updateMany(filter, updatedDoc, options);
-             res.send(result);
-         }) */
 
 
 
